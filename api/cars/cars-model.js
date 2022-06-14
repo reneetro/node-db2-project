@@ -7,7 +7,12 @@ const getAll = () => {
 
 const getById = (id) => {
   // DO YOUR MAGIC
-  return db('cars').where('id', id);
+  return db('cars').where('id', id).first();
+}
+
+const getByVin = (vin) => {
+  // DO YOUR MAGIC
+  return db('cars').where('vin', vin).first();
 }
 
 const create = async (car) => {
@@ -19,5 +24,6 @@ const create = async (car) => {
 module.exports = {
   getAll,
   getById,
+  getByVin,
   create
 }

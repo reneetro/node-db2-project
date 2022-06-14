@@ -17,30 +17,32 @@ const checkCarId = (req, res, next) => {
 
 const checkCarPayload = (req, res, next) => {
   // DO YOUR MAGIC
-  let { vin, make, model, milage, } = req.body
-  if(vin.trim() === ''){
+  let { vin, make, model, mileage, } = req.body
+  if(!vin){
     res.status(400).json({ message: 'vin is missing'})
     return;
   }
-  if(make.trim() === '' || typeof make !== 'string' ){
+  if(!make){
     res.status(400).json({ message: 'make is missing'})
     return;
   }
-  if(model.trim() === '' || typeof model !== 'string' ){
+  if(!model){
     res.status(400).json({ message: 'model is missing'})
     return;
   }
-  if(milage === '' || typeof milage.parseFloat() !== 'number' ){
-    res.status(400).json({ message: 'milage is missing'})
+  if(!mileage){
+    res.status(400).json({ message: 'mileage is missing'})
     return;
   }
 
   req.car = {
+     ...req.body,
      vin: vin.trim(),
      make: make.trim(), 
      model: model.trim(), 
-     milage: milage.parseFloat()
+     mileage: mileage
     }
+
   next();
 }
 
@@ -55,16 +57,18 @@ const checkVinNumberValid = (req, res, next) => {
   }
 }
 
-const checkVinNumberUnique = (req, res, next) => {
+const checkVinNumberUnique = async (req, res, next) => {
   // DO YOUR MAGIC
-  const vinNotUnique = Car.getAll().then(cars => {
-    cars.filter(car => car.vin === req.body.vin)
-  })
-  if(vinNotUnique.length >= 1){
-    res.status(400).json({ message: `vin ${req.body.vin} already exists`})
-    return;
+  if(req.body.vin){
+    const exists = await Car.getByVin(req.body.vin)
+    if(!exists){
+      next();
+    } else {
+      res.status(400).json({ message: `vin ${req.body.vin} already exists`})
+    }
+  } else {
+    res.status(400).json({ message: 'vin is missing'})
   }
-  next();
 }
 
 module.exports = {
