@@ -5,7 +5,7 @@ exports.up = function (knex) {
     tbl.varchar('vin').unique().notNullable();
     tbl.varchar('make', 128).notNullable();
     tbl.varchar('model', 128).notNullable();
-    tbl.numeric('milage').notNullable();
+    tbl.integer('milage').notNullable();
     tbl.varchar('title', 128);
     tbl.varchar('transmission');
   })
